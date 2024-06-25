@@ -1148,6 +1148,9 @@ class SmartCollectionsTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         smart_collections = shopify.SmartCollection.find(**kwargs)
+        if len(smart_collections) == 0:
+            raise Exeption('Smart Collection query returned 0 results')
+
         return  [smart_collection.to_dict() for  smart_collection in smart_collections]
 
     def update_smart_collections(self, smart_collection_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -1320,6 +1323,9 @@ class CustomCollectionsTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         custom_collections = shopify.CustomCollection.find(**kwargs)
+        if len(custom_collections) == 0:
+            raise Exeption('Custom Collection query returned 0 results')
+
         return  [custom_collection.to_dict() for  custom_collection in custom_collections]
 
     def update_custom_collections(self, custom_collection_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -1331,7 +1337,8 @@ class CustomCollectionsTable(APITable):
             for key, value in values_to_update.items():
                 setattr(custom_collection, key, value)
             custom_collection.save()
-            logger.info(f'custom Collections {custom_collection_id} updated')
+            logger.info(f'Custom Collections {custom_collection_id} updated')
+
 
     def delete_custom_collections(self, custom_collection_ids: List[int]) -> None:
         api_session = self.handler.connect()
@@ -1340,7 +1347,8 @@ class CustomCollectionsTable(APITable):
         for custom_collection_id in custom_collection_ids:
             custom_collection = shopify.CustomCollection.find(custom_collection_id)
             custom_collection.destroy()
-            logger.info(f'custom collection {custom_collection_id} deleted')
+            logger.info(f'Custom collection {custom_collection_id} deleted')
+
 
     def create_custom_collections(self, custom_collection_data: List[Dict[Text, Any]]) -> None:
         api_session = self.handler.connect()
@@ -1490,7 +1498,9 @@ class DraftOrdersTable(APITable):
             for key, value in values_to_update.items():
                 setattr(draft_order, key, value)
             draft_order.save()
-            logger.info(f'draft_order {draft_order_id} updated')
+
+            logger.info(f'Draft_order {draft_order_id} updated')
+
 
     def delete_draft_orders(self, draft_order_ids: List[int]) -> None:
         api_session = self.handler.connect()
@@ -1499,7 +1509,8 @@ class DraftOrdersTable(APITable):
         for draft_order_id in draft_order_ids:
             draft_order = shopify.DraftOrder.find(draft_order_id)
             draft_order.destroy()
-            logger.info(f'draft_order {draft_order_id} deleted')
+            logger.info(f'Draft_order {draft_order_id} deleted')
+
     
     def get_columns(self) -> List[Text]:
         return pd.json_normalize(self.get_draft_orders(limit=1)).columns.tolist()
@@ -1508,6 +1519,9 @@ class DraftOrdersTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         draft_orders = shopify.DraftOrder.find(**kwargs)
+        if len(draft_orders) == 0:
+            raise Exception('Draft Order query returned 0 results')
+
         return [draft_order.to_dict() for draft_order in draft_orders]
 
     def create_draft_orders(self, draft_order_data: List[Dict[Text, Any]]) -> None:
@@ -1573,6 +1587,9 @@ class CheckoutTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         checkouts = shopify.Checkout.find(**kwargs)
+        if len(checkouts) == 0:
+            raise Exception('Checkout query returned 0 results')
+
         return  [checkout.to_dict() for  checkout in checkouts]
 
 
@@ -1717,6 +1734,9 @@ class PriceRuleTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         price_rules = shopify.PriceRule.find(**kwargs)
+        if len(price_rules) == 0:
+            raise Exception('Price_rules query returned 0 results')
+
         return [price_rule.to_dict() for price_rule in price_rules]
 
     def update_price_rules(self, price_rule_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -1728,7 +1748,8 @@ class PriceRuleTable(APITable):
             for key, value in values_to_update.items():
                 setattr(price_rule, key, value)
             price_rule.save()
-            logger.info(f'price_rule {price_rule_id} updated')
+            logger.info(f'Price_rule {price_rule_id} updated')
+
 
     def delete_price_rules(self, price_rule_ids: List[int]) -> None:
         api_session = self.handler.connect()
@@ -1737,7 +1758,8 @@ class PriceRuleTable(APITable):
         for price_rule_id in price_rule_ids:
             price_rule = shopify.PriceRule.find(price_rule_id)
             price_rule.destroy()
-            logger.info(f'price_rule {price_rule_id} deleted')
+            logger.info(f'Price_rule {price_rule_id} deleted')
+
 
     def create_price_rules(self, price_rule_data: List[Dict[Text, Any]]) -> None:
         api_session = self.handler.connect()
@@ -1746,9 +1768,9 @@ class PriceRuleTable(APITable):
         for price_rule in price_rule_data:
             created_price_rule = shopify.PriceRule.create(price_rule)
             if 'id' not in created_price_rule.to_dict():
-                raise Exception('price_rule creation failed')
+                raise Exception('Price_rule creation failed')
             else:
-                logger.info(f'price_rule {created_price_rule.to_dict()["id"]} created')
+                logger.info(f'Price_rule {created_price_rule.to_dict()["id"]} created')
 
 
 class RefundsTable(APITable):
@@ -1832,7 +1854,8 @@ class RefundsTable(APITable):
             refunds = shopify.Refund.find(order_id=order_id, **kwargs)
             refunds_list = refunds_list + [refund.to_dict() for refund in refunds]
         if len(refunds_list) == 0:
-            logger.info('Refund not found')
+            raise Exception('Refunds query 0 results')
+
         return refunds_list
 
     def create_refunds(self, refund_data: List[Dict[Text, Any]]) -> None:
@@ -1991,7 +2014,9 @@ class DiscountCodesTable(APITable):
             )
             discount_code_list = discount_code_list + discount_codes
         if len(discount_code_list) == 0:
-            logger.info("No discount codes found")
+
+            raise Exception("Discount_code query 0 results")
+
         return [discount_code.to_dict() for discount_code in discount_code_list]
 
     def update_discount_codes(
@@ -2010,7 +2035,8 @@ class DiscountCodesTable(APITable):
             for key, value in values_to_update.items():
                 setattr(discount_code, key, value)
             discount_code.save()
-            logger.info(f"discount_code {discount_code_ids[i]} updated")
+            logger.info(f"Discount_code {discount_code_ids[i]} updated")
+
 
     def delete_discount_codes(
         self, price_rule_ids: List[int], discount_code_ids: List[int]
@@ -2023,7 +2049,8 @@ class DiscountCodesTable(APITable):
                 discount_code_ids[i], price_rule_id=price_rule_ids[i]
             )
             discount_code.destroy()
-            logger.info(f"discount_code {discount_code_ids[i]} deleted")
+            logger.info(f"Discount_code {discount_code_ids[i]} deleted")
+
 
     def create_discount_codes(self, discount_code_data: List[Dict[Text, Any]]) -> None:
         api_session = self.handler.connect()
@@ -2032,10 +2059,11 @@ class DiscountCodesTable(APITable):
         for discount_code in discount_code_data:
             created_discount_code = shopify.DiscountCode.create(discount_code)
             if "id" not in created_discount_code.to_dict():
-                raise Exception("discount_code creation failed")
+                raise Exception("Discount_code creation failed")
             else:
                 logger.info(
-                    f'discount_code {created_discount_code.to_dict()["id"]} created'
+                    f'Discount_code {created_discount_code.to_dict()["id"]} created'
+
                 )
 
 
@@ -2176,6 +2204,9 @@ class MarketingEventTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         marketing_events = shopify.MarketingEvent.find(**kwargs)
+        if len(marketing_events) == 0:
+            raise Exception('Marketing_events query returned 0 results')
+
         return [marketing_event.to_dict() for marketing_event in marketing_events]
 
     def update_marketing_events(self, marketing_event_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -2347,6 +2378,10 @@ class BlogTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         blogs = shopify.MarketingEvent.find(**kwargs)
+
+        if len(blogs) == 0:
+            raise Exception('blogs query returned 0 results')
+
         return [blog.to_dict() for blog in blogs]
 
     def update_blogs(self, blog_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -2358,7 +2393,9 @@ class BlogTable(APITable):
             for key, value in values_to_update.items():
                 setattr(blog, key, value)
             blog.save()
-            logger.info(f'blog {blog_id} updated')
+
+            logger.info(f'Blog {blog_id} updated')
+
 
     def delete_blogs(self, blog_ids: List[int]) -> None:
         api_session = self.handler.connect()
@@ -2367,7 +2404,8 @@ class BlogTable(APITable):
         for blog_id in blog_ids:
             blog = shopify.MarketingEvent.find(blog_id)
             blog.destroy()
-            logger.info(f'blog {blog_id} deleted')
+            logger.info(f'Blog {blog_id} deleted')
+
 
     def create_blogs(self, blog_data: List[Dict[Text, Any]]) -> None:
         api_session = self.handler.connect()
@@ -2376,9 +2414,9 @@ class BlogTable(APITable):
         for blog in blog_data:
             created_blog = shopify.MarketingEvent.create(blog)
             if 'id' not in created_blog.to_dict():
-                raise Exception('blog creation failed')
+                raise Exception('Blog creation failed')
             else:
-                logger.info(f'blog {created_blog.to_dict()["id"]} created')
+                logger.info(f'Blog {created_blog.to_dict()["id"]} created')
 
 
 class ThemeTable(APITable):  
@@ -2518,6 +2556,9 @@ class ThemeTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         themes = shopify.Theme.find(**kwargs)
+        if len(themes) == 0:
+            raise Exeption('Themes query returned 0 results')
+
         return [theme.to_dict() for theme in themes]
 
     def update_themes(self, theme_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -2706,7 +2747,8 @@ class ArticleTable(APITable):
             )
             article_list = article_list + articles
         if len(article_list) == 0:
-            logger.info("No articles found")
+            raise Exception("articles query returned 0 results")
+
         return [article.to_dict() for article in article_list]
 
     def update_articles(
@@ -2891,6 +2933,9 @@ class CommentTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         comments = shopify.Comment.find(**kwargs)
+        if len(comments) == 0:
+            raise Exception('Comments query returned 0 results')
+
         return [comment.to_dict() for comment in comments]
 
     def update_comments(self, comment_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -3062,6 +3107,9 @@ class PageTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         pages = shopify.Page.find(**kwargs)
+        if len(pages) == 0:
+            raise Exception('Pages query returned 0 results')
+
         return [page.to_dict() for page in pages]
 
     def update_pages(self, page_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -3233,6 +3281,9 @@ class redirectTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         redirects = shopify.Redirect.find(**kwargs)
+        if len(redirects) == 0:
+            raise Exception("Redirects query returned 0 results")
+
         return [redirect.to_dict() for redirect in redirects]
 
     def update_redirects(self, redirect_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
@@ -3244,7 +3295,8 @@ class redirectTable(APITable):
             for key, value in values_to_update.items():
                 setattr(redirect, key, value)
             redirect.save()
-            logger.info(f'redirect {redirect_id} updated')
+            logger.info(f'Redirect {redirect_id} updated')
+
 
     def delete_redirects(self, redirect_ids: List[int]) -> None:
         api_session = self.handler.connect()
@@ -3253,7 +3305,7 @@ class redirectTable(APITable):
         for redirect_id in redirect_ids:
             redirect = shopify.Redirect.find(redirect_id)
             redirect.destroy()
-            logger.info(f'redirect {redirect_id} deleted')
+            logger.info(f'Redirect {redirect_id} deleted')
 
     def create_redirects(self, redirect_data: List[Dict[Text, Any]]) -> None:
         api_session = self.handler.connect()
@@ -3262,9 +3314,10 @@ class redirectTable(APITable):
         for redirect in redirect_data:
             created_redirect = shopify.Redirect.create(redirect)
             if 'id' not in created_redirect.to_dict():
-                raise Exception('redirect creation failed')
+                raise Exception('Redirect creation failed')
             else:
-                logger.info(f'redirect {created_redirect.to_dict()["id"]} created')
+                logger.info(f'Redirect {created_redirect.to_dict()["id"]} created')
+
 
 
 class TenderTransactionTable(APITable):  
@@ -3315,6 +3368,9 @@ class TenderTransactionTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         tender_transactions = shopify.TenderTransaction.find(**kwargs)
+        if len(tender_transactions) == 0:
+            raise Exception('Tender_transactions query returned 0 results')
+
         return [tender_transaction.to_dict() for tender_transaction in tender_transactions]
 
 
@@ -3366,6 +3422,9 @@ class PolicyTable(APITable):
         api_session = self.handler.connect()
         shopify.ShopifyResource.activate_session(api_session)
         policies = shopify.Policy.find(**kwargs)
+        if len(policies) == 0:
+            raise Exception('Policies query returned 0 results')
+
         return [policy.to_dict() for policy in policies]
 
 
@@ -3641,4 +3700,271 @@ class ShopTable(APITable):
 #                 raise Exception('gift_card creation failed')
 #             else:
 #                 logger.info(f'gift_card {created_gift_card.to_dict()["id"]} created')
+
+
+
+class ResourceFeedbackTable(APITable):
+    """The
+    Shopify resource_feedbacks Table implementation"""
+
+    def select(self, query: ast.Select) -> pd.DataFrame:
+        """Pulls data from the Shopify "GET /resource_feedbacks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Select
+           Given SQL SELECT query
+
+        Returns
+        -------
+        pd.DataFrame
+            Shopify resource_feedbacks matching the query
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+
+        select_statement_parser = SELECTQueryParser(
+            query,
+            'resource_feedbacks',
+            self.get_columns()
+        )
+        selected_columns, where_conditions, order_by_conditions, result_limit = select_statement_parser.parse_query()
+
+        resource_feedbacks_df = pd.json_normalize(self.get_resource_feedbacks(limit=result_limit))
+
+        select_statement_executor = SELECTQueryExecutor(
+            resource_feedbacks_df,
+            selected_columns,
+            where_conditions,
+            order_by_conditions
+        )
+        resource_feedbacks_df = select_statement_executor.execute_query()
+
+        return resource_feedbacks_df
+    
+    def insert(self, query: ast.Insert) -> None:
+        """Inserts data into the Shopify "POST /resource_feedbacks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Insert
+           Given SQL INSERT query
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+        insert_statement_parser = INSERTQueryParser(
+            query,
+            supported_columns=['state', 'messages', 'feedback_generated_at'],
+            mandatory_columns=['state', 'messages', 'feedback_generated_at'],
+            all_mandatory=False
+        )
+        resource_feedback_data = insert_statement_parser.parse_query()
+        self.create_resource_feedbacks(resource_feedback_data)
+
+    def get_columns(self) -> List[Text]:
+        return pd.json_normalize(self.get_resource_feedbacks(limit=1)).columns.tolist()
+
+    def get_resource_feedbacks(self, **kwargs) -> List[Dict]:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+        resource_feedbacks = shopify.ResourceFeedback.find(**kwargs)
+        if not resource_feedbacks:
+            raise Exception('Resource_feedbacks query returned 0 results')
+        return [resource_feedback.to_dict() for resource_feedback in resource_feedbacks]
+
+    def create_resource_feedbacks(self, resource_feedback_data: List[Dict[Text, Any]]) -> None:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+
+        for resource_feedback in resource_feedback_data:
+            created_resource_feedback = shopify.ResourceFeedback.create(resource_feedback)
+            if 'id' not in created_resource_feedback.to_dict():
+                raise Exception('Resource_feedback creation failed')
+            else:
+                logger.info(f'Resource_feedback {created_resource_feedback.to_dict()["id"]} created')
+
+
+class OrderRiskTable(APITable):
+    """The Shopify order_risks Table implementation"""
+
+    def select(self, query: ast.Select) -> pd.DataFrame:
+        """Pulls data from the Shopify "GET /order_risks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Select
+           Given SQL SELECT query
+
+        Returns
+        -------
+        pd.DataFrame
+            Shopify order_risks matching the query
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+        select_statement_parser = SELECTQueryParser(
+            query,
+            'order_risks',
+            self.get_columns()
+        )
+        selected_columns, where_conditions, order_risk_by_conditions, result_limit = select_statement_parser.parse_query()
+        order_risks_df = pd.json_normalize(self.get_order_risks(limit=result_limit))
+
+        select_statement_executor = SELECTQueryExecutor(
+            order_risks_df,
+            selected_columns,
+            where_conditions,
+            order_risk_by_conditions
+        )
+        order_risks_df = select_statement_executor.execute_query()
+
+        return order_risks_df
+
+    def insert(self, query: ast.Insert) -> None:
+        """Inserts data into the Shopify "POST /order_risks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Insert
+           Given SQL INSERT query
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+        insert_statement_parser = INSERTQueryParser(
+            query,
+            supported_columns=['cause_cancel', 'checkout_id', 'display', 'message', 'order_id', 'recommendation', 'score', 'source'],
+            mandatory_columns=['order_id' ],
+            all_mandatory=False
+        )
+        order_risk_data = insert_statement_parser.parse_query()
+        self.create_order_risks(order_risk_data)
+    
+    def update(self, query: ast.Update) -> None:
+        """Updates data in the Shopify "PUT /order_risks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Update
+           Given SQL UPDATE query
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+        update_statement_parser = UPDATEQueryParser(query)
+        values_to_update, where_conditions = update_statement_parser.parse_query()
+        order_risks_df = pd.json_normalize(self.get_order_risks())
+
+        update_statement_executor = UPDATEQueryExecutor(
+            order_risks_df,
+            where_conditions
+        )
+        order_risks_df = update_statement_executor.execute_query()
+        order_risks_ids = order_risks_df['id'].tolist()
+        self.update_order_risks(order_risks_ids, values_to_update)
+
+    def delete(self, query: ast.Delete) -> None:
+        """Deletes data from the Shopify "DELETE /order_risks" API endpoint.
+
+        Parameters
+        ----------
+        query : ast.Delete
+           Given SQL DELETE query
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the query contains an unsupported condition
+        """
+        delete_statement_parser = DELETEQueryParser(query)
+        where_conditions = delete_statement_parser.parse_query()
+
+        order_risks_df = pd.json_normalize(self.get_order_risks())
+
+        delete_query_executor = DELETEQueryExecutor(
+            order_risks_df,
+            where_conditions
+        )
+
+        order_risks_df = delete_query_executor.execute_query()
+
+        order_risk_ids = order_risks_df['id'].tolist()
+        self.delete_order_risks(order_risk_ids)
+
+    def update_order_risks(self, order_risk_ids: List[int], values_to_update: Dict[Text, Any]) -> None:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+
+        for order_risk_id in order_risk_ids:
+            order_risk = shopify.OrderRisk.find(order_risk_id)
+            for key, value in values_to_update.items():
+                setattr(order_risk, key, value)
+            order_risk.save()
+            logger.info(f'Order risk {order_risk_id} updated')
+
+    def delete_order_risks(self, order_risk_ids: List[int]) -> None:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+
+        for order_risk_id in order_risk_ids:
+            order_risk = shopify.OrderRisk.find(order_risk_id)
+            order_risk.destroy()
+            logger.info(f'Order risk {order_risk_id} deleted')
+    
+    def get_columns(self) -> List[Text]:
+        return pd.json_normalize(self.get_order_risks(limit=1)).columns.tolist()
+
+    def get_order_risks(self, **kwargs) -> List[Dict]:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+        orders = shopify.Order.find(**kwargs, type="any")
+        order_risks_list = list()
+        for order in orders:
+            order = order.to_dict()
+            order_id = order['id']
+            order_risks = shopify.OrderRisk.find(order_id=order_id, **kwargs)
+            order_risks_list = order_risks_list + [order_risk.to_dict() for order_risk in order_risks]
+        if len(order_risks_list) == 0:
+            raise Exception('Order risk query returned 0 results')
+        return order_risks_list
+
+    def create_order_risks(self, order_risk_data: List[Dict[Text, Any]]) -> None:
+        api_session = self.handler.connect()
+        shopify.ShopifyResource.activate_session(api_session)
+
+        for order_risk in order_risk_data:
+            created_order_risk = shopify.OrderRisk.create(order_risk)
+            if 'id' not in created_order_risk.to_dict():
+                raise Exception('Order risk creation failed')
+            else:
+                logger.info(f'Order risk {created_order_risk.to_dict()["id"]} created')
 
