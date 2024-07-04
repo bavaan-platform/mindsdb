@@ -72,7 +72,7 @@ def make_sql_session():
     from mindsdb.api.executor.controllers.session_controller import SessionController
 
     sql_session = SessionController()
-    sql_session.database = 'mindsdb'
+    sql_session.database = "mindsdb"
     return sql_session
 
 
@@ -81,34 +81,34 @@ def conditions_to_filter(binary_op: ASTNode):
 
     filters = {}
     for op, arg1, arg2 in conditions:
-        if op != '=':
+        if op != "=":
             raise NotImplementedError
         filters[arg1] = arg2
     return filters
 
 
 def extract_comparison_conditions(binary_op: ASTNode):
-    '''Extracts all simple comparison conditions that must be true from an AST node.
+    """Extracts all simple comparison conditions that must be true from an AST node.
     Does NOT support 'or' conditions.
-    '''
+    """
     conditions = []
 
     def _extract_comparison_conditions(node: ASTNode, **kwargs):
         if isinstance(node, ast.BinaryOperation):
             op = node.op.lower()
-            if op == 'and':
+            if op == "and":
                 # Want to separate individual conditions, not include 'and' as its own condition.
                 return
             elif not isinstance(node.args[0], ast.Identifier):
                 # Only support [identifier] =/</>/>=/<=/etc [constant] comparisons.
-                raise NotImplementedError(f'Not implemented arg1: {node.args[0]}')
+                raise NotImplementedError(f"Not implemented arg1: {node.args[0]}")
 
             if isinstance(node.args[1], ast.Constant):
                 value = node.args[1].value
             elif isinstance(node.args[1], ast.Tuple):
                 value = [i.value for i in node.args[1].items]
             else:
-                raise NotImplementedError(f'Not implemented arg2: {node.args[1]}')
+                raise NotImplementedError(f"Not implemented arg2: {node.args[1]}")
 
             conditions.append([op, node.args[0].parts[-1], value])
 
@@ -117,16 +117,13 @@ def extract_comparison_conditions(binary_op: ASTNode):
 
 
 def project_dataframe(df, targets, table_columns):
-    '''
-        case-insensitive projection
-        'select A' and 'select a' return different column case but with the same content
-    '''
+    """
+    case-insensitive projection
+    'select A' and 'select a' return different column case but with the same content
+    """
 
     columns = []
-    df_cols_idx = {
-        col.lower(): col
-        for col in df.columns
-    }
+    df_cols_idx = {col.lower(): col for col in df.columns}
     df_col_rename = {}
 
     for target in targets:
@@ -142,9 +139,8 @@ def project_dataframe(df, targets, table_columns):
             col = target.parts[-1]
             col_df = df_cols_idx.get(col.lower())
             if col_df is not None:
-                if (
-                    hasattr(target, 'alias')
-                    and isinstance(target.alias, ast.Identifier)
+                if hasattr(target, "alias") and isinstance(
+                    target.alias, ast.Identifier
                 ):
                     df_col_rename[col_df] = target.alias.parts[0]
                 else:
@@ -170,19 +166,23 @@ def project_dataframe(df, targets, table_columns):
 
 
 def filter_dataframe(df: pd.DataFrame, conditions: list):
-
     # convert list of conditions to ast.
     # assumes that list was got from extract_comparison_conditions
     where_query = None
     for op, arg1, arg2 in conditions:
-
-        item = ast.BinaryOperation(op=op, args=[ast.Identifier(arg1), ast.Constant(arg2)])
+        if isinstance(arg2, (tuple, list)):
+            arg2 = ast.Tuple(arg2)
+        item = ast.BinaryOperation(
+            op=op, args=[ast.Identifier(arg1), ast.Constant(arg2)]
+        )
         if where_query is None:
             where_query = item
         else:
-            where_query = ast.BinaryOperation(op='and', args=[where_query, item])
+            where_query = ast.BinaryOperation(op="and", args=[where_query, item])
 
-    query = ast.Select(targets=[ast.Star()], from_table=ast.Identifier('df'), where=where_query)
+    query = ast.Select(
+        targets=[ast.Star()], from_table=ast.Identifier("df"), where=where_query
+    )
 
     return query_df(df, query)
 
@@ -199,7 +199,7 @@ def sort_dataframe(df, order_by: list):
             continue
 
         cols.append(col)
-        ascending.append(False if order.direction.lower() == 'desc' else True)
+        ascending.append(False if order.direction.lower() == "desc" else True)
     if len(cols) > 0:
         df = df.sort_values(by=cols, ascending=ascending)
     return df
