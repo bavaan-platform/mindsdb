@@ -4,7 +4,6 @@ from vnstock3.explorer.fmarket.fund import Fund
 from vnstock3.explorer.misc.gold_price import *
 from vnstock3.explorer.misc.exchange_rate import vcb_exchange_rate
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
 from mindsdb_sql.parser import ast
 from mindsdb.integrations.libs.api_handler import APITable
@@ -25,7 +24,7 @@ class StockTable(APITable):
 
     def __init__(self, handler, endpoint):
         super().__init__(handler)
-        self.endpoint = endpoint
+        self.endpoint = endpoint.replace('stock.', '')
         self.today = datetime.today()
 
     def select(self, query: ast.Select) -> pd.DataFrame:
@@ -116,7 +115,7 @@ class FmarketTable(APITable):
 
     def __init__(self, handler, endpoint):
         super().__init__(handler)
-        self.endpoint = endpoint
+        self.endpoint = endpoint.replace('fund.', '')
 
     def select(self, query: ast.Select) -> pd.DataFrame:
         """Pulls data from the Shopify "GET /products" API endpoint.
@@ -168,6 +167,7 @@ class FmarketTable(APITable):
     def get_data(self, symbol=None, **kwargs) -> List[Dict]:
         fund = Fund()
         result = eval(f"fund.{self.endpoint}(symbol)")
+        logger.info(f'{fund}')
         return result
 
 
@@ -342,7 +342,7 @@ class QuoteTable(APITable):
 
     def __init__(self, handler, endpoint):
         super().__init__(handler)
-        self.endpoint = endpoint
+        self.endpoint = endpoint.replace('stock.', '')
         self.today = datetime.today()
 
     def select(self, query: ast.Select) -> pd.DataFrame:
@@ -426,10 +426,10 @@ class QuoteTable(APITable):
         if 'crypto' in self.endpoint:
             data = connect.crypto(symbol=symbol, source=source)
             self.endpoint.replace('.crypto', '')
-        if 'fx' in  self.endpoint:
+        if 'fx' in self.endpoint:
             data = connect.fx(symbol=symbol, source=source)
             self.endpoint.replace('.fx', '')
-        if 'world_index' in  self.endpoint:
+        if 'world_index' in self.endpoint:
             data = connect.world_index(symbol=symbol, source=source)
             self.endpoint.replace('.world_index', '')
         logger.info(f'thisisL: {f"{data}.{self.endpoint}(**{kwargs})"}')
