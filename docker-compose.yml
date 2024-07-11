@@ -17,6 +17,7 @@ services:
     # watchfiles will reload the app when python files are changed
     command: bash -c "watchfiles --filter python 'python -m mindsdb' ."
     environment:
+      ACCEPT_TC: ""
       MINDSDB_DOCKER_ENV: "True"
       MINDSDB_STORAGE_DIR: "/mindsdb/var"
       FLASK_DEBUG: 1  # This will make sure http requests are logged regardless of log level
