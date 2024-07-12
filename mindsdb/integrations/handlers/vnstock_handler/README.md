@@ -1,15 +1,15 @@
 # VNstock Handler
 
-VNStock handler for MindsDB provides interfaces to connect to Shopify via APIs and pull store data into MindsDB.
+VNStock handler for MindsDB provides interfaces to connect to stock market  via APIs and pull stock data into MindsDB.
 
 ---
 
 ## Table of Contents
 
-- [VNstock Handler](#shopify-handler)
+- [VNstock Handler](#vnstock-handler)
   - [Table of Contents](#table-of-contents)
-  - [About VNstock](#about-shopify)
-  - [VNstock Handler Implementation](#shopify-handler-implementation)
+  - [About VNstock](#about-vnstock)
+  - [VNstock Handler Implementation](#vnstock-handler-implementation)
   - [Implemented Features](#implemented-features)
   - [Example Usage](#example-usage)
 
@@ -106,6 +106,11 @@ There are optional param like:
 SELECT * FROM vnstock_database.finance_income_statement
 where symbol='VCI' and data_source='TCBS'and period='year';
 ~~~~
+<!-- Currently, Only `data_source=VCI` support finance_ratio:
+~~~~sql
+SELECT * FROM vnstock_database.stock_finance_ratio
+where symbol='VCI' and data_source='VCI'and period='year';
+~~~~ -->
 
 ### 3. Get quote history
 

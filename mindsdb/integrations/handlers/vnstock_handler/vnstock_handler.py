@@ -65,69 +65,95 @@ class VNStockHandler(APIHandler):
             "stock_list_all_symbols_by_exchange", listing_all_symbols_by_exchange_data
         )
 
-        # listing_all_symbols_by_group_data = StockTable(self, "listing.symbols_by_group")
-        # self._register_table("list_all_symbols_by_group", listing_all_symbols_by_group_data)
-
         listing_all_symbols_by_industries_data = StockTable(
             self, "listing.symbols_by_industries"
         )
         self._register_table(
-            "stock_listing_all_symbols_by_industries", listing_all_symbols_by_industries_data
+            "stock_listing_all_symbols_by_industries",
+            listing_all_symbols_by_industries_data,
         )
 
-        company_overview_data = StockTable(self, "stock.company.overview")
-        self._register_table("stock_company_overview", company_overview_data)
+        stock_company_overview_data = StockTable(self, "stock.company.overview")
+        self._register_table("stock_company_overview", stock_company_overview_data)
 
-        company_profile_data = StockTable(self, "stock.company.profile")
-        self._register_table("stock_company_profile", company_profile_data)
+        stock_company_profile_data = StockTable(self, "stock.company.profile")
+        self._register_table("stock_company_profile", stock_company_profile_data)
 
-        company_shareholders_data = StockTable(self, "stock.company.shareholders")
-        self._register_table("stock_company_shareholders", company_shareholders_data)
+        stock_company_shareholders_data = StockTable(self, "stock.company.shareholders")
+        self._register_table(
+            "stock_company_shareholders", stock_company_shareholders_data
+        )
 
-        company_officers_data = StockTable(self, "stock.company.officers")
-        self._register_table("stock_company_officers", company_officers_data)
+        stock_company_officers_data = StockTable(self, "stock.company.officers")
+        self._register_table("stock_company_officers", stock_company_officers_data)
 
-        company_subsidiaries_data = StockTable(self, "stock.stock.company.subsidiaries")
-        self._register_table("stock_company_subsidiaries", company_subsidiaries_data)
+        stock_company_subsidiaries_data = StockTable(
+            self, "stock.stock.company.subsidiaries"
+        )
+        self._register_table(
+            "stock_company_subsidiaries", stock_company_subsidiaries_data
+        )
 
-        company_dividends_data = StockTable(self, "stock.company.dividends")
-        self._register_table("stock_company_dividends", company_dividends_data)
+        stock_company_dividends_data = StockTable(self, "stock.company.dividends")
+        self._register_table("stock_company_dividends", stock_company_dividends_data)
 
-        company_insider_deals_data = StockTable(self, "stock.company.insider_deals")
-        self._register_table("stock_company_insider_deals", company_insider_deals_data)
+        stock_company_insider_deals_data = StockTable(
+            self, "stock.company.insider_deals"
+        )
+        self._register_table(
+            "stock_company_insider_deals", stock_company_insider_deals_data
+        )
 
-        company_events_data = StockTable(self, "stock.company.events")
-        self._register_table("stock_company_events", company_events_data)
+        stock_company_events_data = StockTable(self, "stock.company.events")
+        self._register_table("stock_company_events", stock_company_events_data)
 
-        company_news_data = StockTable(self, "stock.company.news")
-        self._register_table("stock_company_news", company_news_data)
+        stock_company_news_data = StockTable(self, "stock.company.news")
+        self._register_table("stock_company_news", stock_company_news_data)
 
-        finance_income_statement_data = StockTable(self, "stock.finance.income_statement")
-        self._register_table("stock_finance_income_statement", finance_income_statement_data)
+        stock_finance_income_statement_data = StockTable(
+            self, "stock.finance.income_statement"
+        )
+        self._register_table(
+            "stock_finance_income_statement", stock_finance_income_statement_data
+        )
 
-        finance_balance_sheet_data = StockTable(self, "stock.finance.balance_sheet")
-        self._register_table("stock_finance_balance_sheet", finance_balance_sheet_data)
+        stock_finance_balance_sheet_data = StockTable(
+            self, "stock.finance.balance_sheet"
+        )
+        self._register_table(
+            "stock_finance_balance_sheet", stock_finance_balance_sheet_data
+        )
 
-        finance_cash_flow_data = StockTable(self, "stock.finance.cash_flow")
-        self._register_table("stock_finance_cash_flow", finance_cash_flow_data)
+        stock_finance_cash_flow_data = StockTable(self, "stock.finance.cash_flow")
+        self._register_table("stock_finance_cash_flow", stock_finance_cash_flow_data)
 
-        finance_ratio_data = StockTable(self, "stock.finance.ratio")
-        self._register_table("stock_finance_ratio", finance_ratio_data)
+        """
+        Todo
+        reason: Error handling row
+        
+        stock_finance_ratio_data = StockTable(self, "stock.finance.ratio")
+        self._register_table("stock_finance_ratio", stock_finance_ratio_data)
+        """
 
-        quote_history_data = QuoteTable(self, "stock.quote.history")
-        self._register_table("stock_quote_history", quote_history_data)
+        stock_quote_history_data = QuoteTable(self, "stock.quote.history")
+        self._register_table("stock_quote_history", stock_quote_history_data)
 
-        quote_intraday_data = StockTable(self, "stock.quote.intraday")
-        self._register_table("stock_quote_intraday", quote_intraday_data)
+        stock_quote_intraday_data = StockTable(self, "stock.quote.intraday")
+        self._register_table("stock_quote_intraday", stock_quote_intraday_data)
+        """
+        ToDo
+        
+        reason: Cannot implemented due to library error
+        
+        fx_quote_history_data = QuoteTable(self, 'fx.quote.history')
+        self._register_table("fx_quote_history", fx_quote_history_data)
 
-        # fx_quote_history_data = QuoteTable(self, 'fx.quote.history')
-        # self._register_table("fx_quote_history", fx_quote_history_data)
+        crypto_quote_history_data = QuoteTable(self, 'crypto.quote.history')
+        self._register_table("crypto_quote_history", crypto_quote_history_data)
 
-        # crypto_quote_history_data = QuoteTable(self, 'crypto.quote.history')
-        # self._register_table("crypto_quote_history", crypto_quote_history_data)
-
-        # world_index_history_data = QuoteTable(self, 'world_index.quote.history')
-        # self._register_table("world_index_history", world_index_history_data)
+        world_index_history_data = QuoteTable(self, 'world_index.quote.history')
+        self._register_table("world_index_history", world_index_history_data)
+        """
 
         fund_list_data = FmarketListingTable(self)
         self._register_table("fund_list", fund_list_data)
@@ -148,7 +174,9 @@ class VNStockHandler(APIHandler):
             "fund_details_industry_holding", fund_details_industry_holding_data
         )
 
-        fund_details_asset_holding_data = FmarketTable(self, "fund.details.asset_holding")
+        fund_details_asset_holding_data = FmarketTable(
+            self, "fund.details.asset_holding"
+        )
         self._register_table(
             "fund_details_asset_holding", fund_details_asset_holding_data
         )
@@ -161,7 +189,7 @@ class VNStockHandler(APIHandler):
 
         exchange_rate_data = ExchangeRateTable(self)
         self._register_table("exchange_rate", exchange_rate_data)
-        
+
     def connect(self):
         connect = Vnstock()
         return connect
